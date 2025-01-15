@@ -64,3 +64,11 @@ Player Demand = Country Demand * (Player Marketing / Total Country Marketing) * 
 | **Sabotage Cost**  | $1,000 per attempt   | $1,500 per attempt   |
 | **Sabotage Rate**  | 50%                  | 75%                  |
 | **Starting Cash**  | $20,000              | $25,000              |
+
+---
+
+## Disclaimer
+
+This project was hacked together in a few days. It is not intended for
+production use as it is possible for players to gain an unfair advantage
+in the game by reading the source code.
