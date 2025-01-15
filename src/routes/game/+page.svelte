@@ -164,7 +164,9 @@
 					>
 				</div>
 
-				<p class="my-2 font-bold">Sabotage (once per 10 secs, ±${currentPlayer.country.sabotage_cost})</p>
+				<p class="my-2 font-bold">
+					Sabotage (once per 10 secs, ±${currentPlayer.country.sabotage_cost})
+				</p>
 				<Select.Root selected={targetPlayer} onSelectedChange={(value) => (targetPlayer = value)}>
 					<Select.Trigger class="w-64">
 						<Select.Value placeholder="Player to sabotage" />
@@ -185,9 +187,14 @@
 				>
 			</div>
 		</div>
-	{:else}
+	{:else if currentPlayer === null}
 		<p class="flex h-screen items-center justify-center text-center font-medium">
 			Waiting for game start... <i class="fas fa-spinner fa-spin"></i>
 		</p>
+	{:else}
+		<div class="text-center font-medium">
+			<p>Game ended!</p>
+			<p>Sorry for the bad UI; I was too lazy to design 🗿</p>
+		</div>
 	{/if}
 </div>

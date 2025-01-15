@@ -3,7 +3,7 @@ import type { Player } from './player';
 import { toast } from 'svelte-sonner';
 import { WS_URL } from './config';
 
-const player = writable<Player | null>(null);
+const player = writable<Player | null | undefined>(null);
 const socket = new WebSocket(WS_URL);
 
 socket.addEventListener('open', (event) => {
@@ -20,7 +20,9 @@ socket.addEventListener('message', (event) => {
 		toast.error('Sabotage!', {
 			description: data.data
 		});
-	} // TODO: Handle game end
+	} else if (data.event === 'end') {
+		player.set(undefined);
+	}
 });
 
 const send = async (event: string, data: any) => {

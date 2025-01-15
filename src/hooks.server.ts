@@ -135,7 +135,7 @@ const sabotage_player = (saboteur: string, target: string) => {
 
 const handle_event = (event: string, data: any, ws: WebSocket) => {
 	if (event === 'join') join(data, ws);
-	else if (event === 'start') gameloop();
+	else if (event === 'start' && !game_ongoing) gameloop();
 	else if (event === 'update') update_player(data.username, data);
 	else if (event === 'sabotage') sabotage_player(data.saboteur, data.target);
 };
