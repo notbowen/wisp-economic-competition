@@ -7,6 +7,7 @@ export interface Country {
 	starting_cash: number;
 	total_marketing: number;
 	max_price: number;
+	players: string[];
 }
 
 let china: Country = {
@@ -18,6 +19,7 @@ let china: Country = {
 	starting_cash: 20000,
 	total_marketing: 0,
 	max_price: 20,
+	players: []
 };
 
 let usa: Country = {
@@ -29,6 +31,7 @@ let usa: Country = {
 	starting_cash: 25000,
 	total_marketing: 0,
 	max_price: 30,
+	players: []
 };
 
 export { china, usa };

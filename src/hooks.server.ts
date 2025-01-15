@@ -13,6 +13,9 @@ const join = (data: any, ws: WebSocket) => {
 	let country = data.country === 'China' ? china : usa;
 	country.total_marketing += 20;
 
+	// Add user to country players
+	country.players.push(data.username);
+
 	game_queue[data.username] = {
 		ws,
 		player_data: {
@@ -22,7 +25,7 @@ const join = (data: any, ws: WebSocket) => {
 			marketing: 20,
 			sabotage: null,
 			demand: country.demand * (20 / country.total_marketing),
-			price: country.max_price / 2,
+			price: country.max_price / 2
 		}
 	};
 
@@ -51,12 +54,14 @@ const gameloop = async () => {
 		console.log(`Starting round ${i + 1} of ${loops}`);
 
 		// Wait for round to end
-		await new Promise(r => setTimeout(r, ROUND_TIME * 1000));
+		await new Promise((r) => setTimeout(r, ROUND_TIME * 1000));
 
 		// Update the user's balance to reflect profit
 		for (var player in game_queue) {
 			let player_data = game_queue[player].player_data;
-			game_queue[player].player_data.cash += player_data.demand * (player_data.price - player_data.country.production_cost) - (player_data.marketing * player_data.country.marketing_cost);
+			game_queue[player].player_data.cash +=
+				player_data.demand * (player_data.price - player_data.country.production_cost) -
+				player_data.marketing * player_data.country.marketing_cost;
 
 			game_queue[player].ws.send(
 				JSON.stringify({ event: 'update', data: game_queue[player].player_data })
@@ -79,19 +84,26 @@ const update_player = (player: string, new_data: any) => {
 	original_data.country.total_marketing += marketing_delta;
 
 	// Update the player's data
-	game_queue[player].player_data = new_data;
+	game_queue[player].player_data.marketing = new_data.marketing;
+	game_queue[player].player_data.price = new_data.price;
+	game_queue[player].player_data.sabotage = new_data.sabotage;
 
 	// Recalculate every player within that country's demand
 	for (var player in game_queue) {
 		let player_data = game_queue[player].player_data;
 		if (player_data.country === original_data.country) {
-			player_data.demand = original_data.country.demand * (player_data.marketing / original_data.country.total_marketing);
+			player_data.demand =
+				original_data.country.demand *
+				(player_data.marketing / original_data.country.total_marketing) *
+				(1 - (player_data.price / player_data.country.max_price));
 		}
 	}
 
 	// Push the update to the user
 	for (var player in game_queue) {
-		game_queue[player].ws.send(JSON.stringify({ event: 'update', data: game_queue[player].player_data }));
+		game_queue[player].ws.send(
+			JSON.stringify({ event: 'update', data: game_queue[player].player_data })
+		);
 	}
 };
 
@@ -99,6 +111,38 @@ const handle_event = (event: string, data: any, ws: WebSocket) => {
 	if (event === 'join') join(data, ws);
 	else if (event === 'start') gameloop();
 	else if (event === 'update') update_player(data.username, data);
+};
+
+const remove_player = (ws: WebSocket) => {
+	// Remove player
+	for (var player in game_queue) {
+		if (game_queue[player].ws === ws) {
+			// Remove player from country
+			let player_data = game_queue[player].player_data;
+			player_data.country.players = player_data.country.players.filter(
+				(player) => player !== player
+			);
+			player_data.country.total_marketing -= player_data.marketing;
+
+			//  Remove player from game queue
+			delete game_queue[player];
+			break;
+		}
+	}
+
+	// Update the rest of the player's demand
+	for (var player in game_queue) {
+		let player_data = game_queue[player].player_data;
+		player_data.demand =
+			player_data.country.demand * (player_data.marketing / player_data.country.total_marketing);
+	}
+
+	// Push the update to the user
+	for (var player in game_queue) {
+		game_queue[player].ws.send(
+			JSON.stringify({ event: 'update', data: game_queue[player].player_data })
+		);
+	}
 };
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -116,6 +160,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			});
 
 			ws.on('close', () => {
+				remove_player(ws);
 				console.log('Client disconnected');
 			});
 		});
