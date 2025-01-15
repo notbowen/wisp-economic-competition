@@ -5,6 +5,7 @@ import { WebSocket, WebSocketServer } from 'ws';
 
 let wss: WebSocketServer | null = null;
 let game_queue: Record<string, { player_data: Player; ws: WebSocket }> = {};
+let game_ongoing = false;
 
 const join = (data: any, ws: WebSocket) => {
 	if (game_queue[data.username]) return;
@@ -38,6 +39,8 @@ const join = (data: any, ws: WebSocket) => {
 };
 
 const gameloop = async () => {
+	game_ongoing = true;
+
 	const TOTAL_TIME = 3 * 60;
 	const ROUND_TIME = 10;
 
@@ -73,6 +76,8 @@ const gameloop = async () => {
 	for (var player in game_queue) {
 		game_queue[player].ws.send(JSON.stringify({ event: 'end', data: null }));
 	}
+
+	game_ongoing = false;
 };
 
 const update_player = (player: string, new_data: any) => {
@@ -160,6 +165,7 @@ const remove_player = (ws: WebSocket) => {
 	}
 
 	// Push the update to the user
+	if (!game_ongoing) return;
 	for (var player in game_queue) {
 		game_queue[player].ws.send(
 			JSON.stringify({ event: 'update', data: game_queue[player].player_data })
