@@ -12,7 +12,6 @@
 	let cashHistory: number[] = [];
 	let chartContainer: HTMLElement;
 	let chart: any;
-	let lastUpdateTime: number;
 
 	$: {
 		if (currentPlayer && chartContainer && !chart) {
@@ -29,10 +28,12 @@
 		}
 	}
 
+	$: targetPlayer = undefined;
+
 	const initChart = () => {
 		chart = new Chart(chartContainer, {
 			data: {
-				labels: ['Turn 1'],
+				labels: ['1'],
 				datasets: [
 					{
 						name: 'Cash',
@@ -52,7 +53,7 @@
 
 	const updateChart = () => {
 		chart.update({
-			labels: [...Array(cashHistory.length).keys()].map((i) => `Turn ${i + 1}`),
+			labels: [...Array(cashHistory.length).keys()].map((i) => i + 1),
 			datasets: [
 				{
 					values: cashHistory
@@ -62,11 +63,20 @@
 	};
 
 	const updatePlayerState = () => {
-		// const now = Date.now();
-		// if (!lastUpdateTime || now - lastUpdateTime > 1000) {
-			send('update', currentPlayer);
-		// 	lastUpdateTime = now;
-		// }
+		send('update', currentPlayer);
+	};
+
+	let canSabotage = true;
+
+	const sabotagePlayer = () => {
+		if (!targetPlayer || !canSabotage) return;
+		send('sabotage', { saboteur: username, target: targetPlayer.value });
+
+		// Disable sabotage and start cooldown
+		canSabotage = false;
+		setTimeout(() => {
+			canSabotage = true;
+		}, 10000);
 	};
 
 	onMount(() => {
@@ -96,29 +106,66 @@
 			</h1>
 			<div bind:this={chartContainer} class="mx-auto"></div>
 
+			<div class="text-center">
+				<p><span class="font-bold">Cash:</span> ${currentPlayer.cash.toFixed(2)}</p>
+				<p><span class="font-bold">Your Demand:</span> {Math.round(currentPlayer.demand)}</p>
+				<p>
+					<span class="font-bold">Expected Profit:</span> ${(
+						currentPlayer.demand * (currentPlayer.price - currentPlayer.country.production_cost) -
+						currentPlayer.marketing * currentPlayer.country.marketing_cost
+					).toFixed(2)}
+				</p>
+			</div>
+
 			<hr class="my-5" />
 
 			<div class="flex flex-col items-center justify-between">
 				<p class="my-2 font-bold">Product Price (max: ${currentPlayer.country.max_price})</p>
 				<div class="align-center flex gap-2">
-					<Button on:click={() => {if (currentPlayer.price <= 0) return; currentPlayer.price -= 1; updatePlayerState()}}>-1</Button>
+					<Button
+						on:click={() => {
+							if (currentPlayer.price <= 0) return;
+							currentPlayer.price -= 1;
+							updatePlayerState();
+						}}>-1</Button
+					>
 					<p class="flex w-40 items-center justify-center rounded-sm bg-gray-100">
 						${currentPlayer.price}
 					</p>
-					<Button on:click={() => {if (currentPlayer.price >= currentPlayer.country.max_price) return; currentPlayer.price += 1; updatePlayerState()}}>+1</Button>
+					<Button
+						on:click={() => {
+							if (currentPlayer.price >= currentPlayer.country.max_price) return;
+							currentPlayer.price += 1;
+							updatePlayerState();
+						}}>+1</Button
+					>
 				</div>
 
-				<p class="my-2 font-bold">Marketing ({currentPlayer.marketing} units = ${currentPlayer.marketing * currentPlayer.country.marketing_cost})</p>
+				<p class="my-2 font-bold">
+					Marketing ({currentPlayer.marketing} units = ${currentPlayer.marketing *
+						currentPlayer.country.marketing_cost} per round)
+				</p>
 				<div class="align-center flex gap-2">
-					<Button on:click={() => {if (currentPlayer.marketing <= 0) return; currentPlayer.marketing -= 1; updatePlayerState()}}>-1</Button>
+					<Button
+						on:click={() => {
+							if (currentPlayer.marketing <= 0) return;
+							currentPlayer.marketing -= 1;
+							updatePlayerState();
+						}}>-1</Button
+					>
 					<p class="flex w-40 items-center justify-center rounded-sm bg-gray-100">
 						{currentPlayer.marketing} units / {currentPlayer.country.total_marketing} units
 					</p>
-					<Button on:click={() => {currentPlayer.marketing += 1; updatePlayerState()}}>+1</Button>
+					<Button
+						on:click={() => {
+							currentPlayer.marketing += 1;
+							updatePlayerState();
+						}}>+1</Button
+					>
 				</div>
 
-				<p class="my-2 font-bold">Sabotage</p>
-				<Select.Root>
+				<p class="my-2 font-bold">Sabotage (once per 10 secs, ±${currentPlayer.country.sabotage_cost})</p>
+				<Select.Root selected={targetPlayer} onSelectedChange={(value) => (targetPlayer = value)}>
 					<Select.Trigger class="w-64">
 						<Select.Value placeholder="Player to sabotage" />
 					</Select.Trigger>
@@ -134,7 +181,8 @@
 						{/if}
 					</Select.Content>
 				</Select.Root>
-				<Button class="my-2 w-64">Sabotage</Button>
+				<Button disabled={!canSabotage} on:click={sabotagePlayer} class="my-2 w-64">Sabotage</Button
+				>
 			</div>
 		</div>
 	{:else}

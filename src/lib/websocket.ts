@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 import type { Player } from "./player";
+import { toast } from "svelte-sonner";
 
 const player = writable<Player | null>(null);
 const socket = new WebSocket('ws://localhost:6969');
@@ -14,6 +15,10 @@ socket.addEventListener('message', (event) => {
     if (data.event === 'update') {
         console.log('Received update:', data.data);
         player.set(data.data);
+    } else if (data.event === 'sabotage') {
+        toast.error('Sabotage!', {
+            description: data.data
+        })
     } // TODO: Handle game end
 });
 

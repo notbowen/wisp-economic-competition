@@ -107,10 +107,32 @@ const update_player = (player: string, new_data: any) => {
 	}
 };
 
+const sabotage_player = (saboteur: string, target: string) => {
+	const success = Math.random() < game_queue[saboteur].player_data.country.sabotage_chance;
+	let victim;
+	if (success) {
+		victim = target;
+	} else {
+		victim = saboteur;
+	} 
+
+	// Update the player's data
+	game_queue[victim].player_data.cash -= game_queue[victim].player_data.country.sabotage_cost;
+	game_queue[victim].ws.send(
+		JSON.stringify({ event: 'update', data: game_queue[victim].player_data })
+	);
+
+	// Alert the victim
+	game_queue[victim].ws.send(
+		JSON.stringify({ event: 'sabotage', data: success ? `You've been sabotaged by ${saboteur}!` : "Sabotage failed!" + ` You lost ${game_queue[victim].player_data.country.sabotage_cost}` })
+	);
+}
+
 const handle_event = (event: string, data: any, ws: WebSocket) => {
 	if (event === 'join') join(data, ws);
 	else if (event === 'start') gameloop();
 	else if (event === 'update') update_player(data.username, data);
+	else if (event === 'sabotage') sabotage_player(data.saboteur, data.target);
 };
 
 const remove_player = (ws: WebSocket) => {
