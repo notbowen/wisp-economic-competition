@@ -1,15 +1,18 @@
 <script lang="ts">
+	import * as Select from '$lib/components/ui/select';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { player, send } from '$lib/websocket';
 	import { Chart } from 'frappe-charts';
+	import { Button } from '$lib/components/ui/button';
 
 	let username = '';
 	let country = '';
 	let cashHistory: number[] = [];
 	let chartContainer: HTMLElement;
 	let chart: any;
+	let lastUpdateTime: number;
 
 	$: {
 		if (currentPlayer && chartContainer && !chart) {
@@ -26,7 +29,7 @@
 		}
 	}
 
-	function initChart() {
+	const initChart = () => {
 		chart = new Chart(chartContainer, {
 			data: {
 				labels: ['Turn 1'],
@@ -45,9 +48,9 @@
 				regionFill: 1
 			}
 		});
-	}
+	};
 
-	function updateChart() {
+	const updateChart = () => {
 		chart.update({
 			labels: [...Array(cashHistory.length).keys()].map((i) => `Turn ${i + 1}`),
 			datasets: [
@@ -56,7 +59,15 @@
 				}
 			]
 		});
-	}
+	};
+
+	const updatePlayerState = () => {
+		// const now = Date.now();
+		// if (!lastUpdateTime || now - lastUpdateTime > 1000) {
+			send('update', currentPlayer);
+		// 	lastUpdateTime = now;
+		// }
+	};
 
 	onMount(() => {
 		username = $page.url.searchParams.get('username') || '';
@@ -76,13 +87,59 @@
 	});
 </script>
 
-{#if currentPlayer}
-	<div>
-	<h1 class="text-center font-bold text-2xl">Cash History</h1>
-	<div bind:this={chartContainer} class="mx-auto"></div>
-	</div>
-{:else}
-	<p class="text-center font-medium">
-		Waiting for game start... <i class="fas fa-spinner fa-spin"></i>
-	</p>
-{/if}
+<div class="mx-auto w-full max-w-sm px-4">
+	{#if currentPlayer}
+		<div class="my-5">
+			<h1 class="text-center text-2xl font-bold">
+				{username} - {country}
+				{country === 'China' ? '🇨🇳' : '🇺🇸'}
+			</h1>
+			<div bind:this={chartContainer} class="mx-auto"></div>
+
+			<hr class="my-5" />
+
+			<div class="flex flex-col items-center justify-between">
+				<p class="my-2 font-bold">Product Price (max: ${currentPlayer.country.max_price})</p>
+				<div class="align-center flex gap-2">
+					<Button on:click={() => {if (currentPlayer.price <= 0) return; currentPlayer.price -= 1; updatePlayerState()}}>-1</Button>
+					<p class="flex w-40 items-center justify-center rounded-sm bg-gray-100">
+						${currentPlayer.price}
+					</p>
+					<Button on:click={() => {if (currentPlayer.price >= currentPlayer.country.max_price) return; currentPlayer.price += 1; updatePlayerState()}}>+1</Button>
+				</div>
+
+				<p class="my-2 font-bold">Marketing ({currentPlayer.marketing} units = ${currentPlayer.marketing * currentPlayer.country.marketing_cost})</p>
+				<div class="align-center flex gap-2">
+					<Button on:click={() => {if (currentPlayer.marketing <= 0) return; currentPlayer.marketing -= 1; updatePlayerState()}}>-1</Button>
+					<p class="flex w-40 items-center justify-center rounded-sm bg-gray-100">
+						{currentPlayer.marketing} units / {currentPlayer.country.total_marketing} units
+					</p>
+					<Button on:click={() => {currentPlayer.marketing += 1; updatePlayerState()}}>+1</Button>
+				</div>
+
+				<p class="my-2 font-bold">Sabotage</p>
+				<Select.Root>
+					<Select.Trigger class="w-64">
+						<Select.Value placeholder="Player to sabotage" />
+					</Select.Trigger>
+					<Select.Content>
+						{#if currentPlayer.country.players.filter((p) => p !== username).length > 0}
+							{#each currentPlayer.country.players as player}
+								{#if player !== username}
+									<Select.Item value={player}>{player}</Select.Item>
+								{/if}
+							{/each}
+						{:else}
+							<Select.Item value="" disabled>No players to sabotage</Select.Item>
+						{/if}
+					</Select.Content>
+				</Select.Root>
+				<Button class="my-2 w-64">Sabotage</Button>
+			</div>
+		</div>
+	{:else}
+		<p class="flex h-screen items-center justify-center text-center font-medium">
+			Waiting for game start... <i class="fas fa-spinner fa-spin"></i>
+		</p>
+	{/if}
+</div>

@@ -4,7 +4,5 @@
 </script>
 
 <div class="flex h-screen w-screen">
-	<div class="m-auto w-full max-w-sm px-4">
-		{@render children()}
-	</div>
+	{@render children()}
 </div>
