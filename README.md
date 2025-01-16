@@ -64,14 +64,14 @@ Player Demand = Country Demand * (Player Marketing / Total Country Marketing) * 
 
 ## Country Values
 
-| **Property**       | **China**            | **USA**              |
-|---------------------|----------------------|----------------------|
-| **Demand**         | 12,000 units         | 8,000 units          |
-| **Marketing Cost** | $100 per point       | $75 per point        |
-| **Product Cost**   | $8 per unit          | $15 per unit         |
-| **Sabotage Cost**  | $1,000 per attempt   | $1,500 per attempt   |
-| **Sabotage Rate**  | 50%                  | 75%                  |
-| **Starting Cash**  | $20,000              | $25,000              |
+| **Property**       | **China**             | **USA**              |
+|--------------------|-----------------------|----------------------|
+| **Demand**         | 12,000 units          | 8,000 units          |
+| **Marketing Cost** | $100 per point        | $75 per point        |
+| **Product Cost**   | $8 per unit           | $15 per unit         |
+| **Sabotage Cost**  | $10,000 per attempt   | $15,000 per attempt  |
+| **Sabotage Rate**  | 50%                   | 75%                  |
+| **Starting Cash**  | $20,000               | $25,000              |
 
 ---
 
@@ -92,7 +92,7 @@ To install `bun`, follow [their documentation](https://bun.sh/docs/installation)
 ## Remaining Tasks
 
 - [x] Tweak sabotaging
-- [ ] Add "user authentication" on the admin page
-- [ ] Add a leaderboard on the admin page
+- [x] Add "user authentication" on the admin page
+- [x] Add a leaderboard on the admin page
 - [ ] Fine-tune the values
 - [ ] Playtest with the rest of the team
