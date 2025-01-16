@@ -24,7 +24,6 @@ const join = (data: any, ws: WebSocket) => {
 			country,
 			cash: country.starting_cash,
 			marketing: 20,
-			sabotage: null,
 			demand: country.demand * (20 / country.total_marketing),
 			price: country.max_price / 2
 		}
@@ -91,7 +90,6 @@ const update_player = (player: string, new_data: any) => {
 	// Update the player's data
 	game_queue[player].player_data.marketing = new_data.marketing;
 	game_queue[player].player_data.price = new_data.price;
-	game_queue[player].player_data.sabotage = new_data.sabotage;
 
 	// Recalculate every player within that country's demand
 	for (var player in game_queue) {
