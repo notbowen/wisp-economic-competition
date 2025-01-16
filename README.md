@@ -80,3 +80,17 @@ Player Demand = Country Demand * (Player Marketing / Total Country Marketing) * 
 This project was hacked together in a few days. It is not intended for
 production use as it is possible for players to gain an unfair advantage
 in the game by reading the source code.
+
+## Setup
+
+A `Dockerfile` is included in this application, so feel free to build
+that and expose ports `3000` and `6969` to run the game. To setup for
+development, run `bun install` and `bun run dev`.
+
+To install `bun`, follow [their documentation](https://bun.sh/docs/installation).
+
+## Remaining Tasks
+
+- [ ] Add a leaderboard on the admin page
+- [ ] Fine-tune the values
+- [ ] Playtest with the rest of the team
