@@ -13,9 +13,9 @@ export interface Country {
 
 let china: Country = {
 	name: 'China',
-	demand: 12000,
-	marketing_cost: 100,
-	production_cost: 8,
+	demand: 6000,
+	marketing_cost: 80,
+	production_cost: 10,
 	sabotage_cost: 10000,
 	sabotage_chance: 0.5,
 	starting_cash: 20000,
@@ -26,12 +26,12 @@ let china: Country = {
 
 let usa: Country = {
 	name: 'USA',
-	demand: 8000,
+	demand: 4000,
 	marketing_cost: 75,
-	production_cost: 15,
-	sabotage_cost: 15000,
-	sabotage_chance: 0.75,
-	starting_cash: 25000,
+	production_cost: 13,
+	sabotage_cost: 13000,
+	sabotage_chance: 0.6,
+	starting_cash: 23000,
 	total_marketing: 0,
 	max_price: 30,
 	players: []

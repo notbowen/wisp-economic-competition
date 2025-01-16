@@ -66,12 +66,12 @@ Player Demand = Country Demand * (Player Marketing / Total Country Marketing) * 
 
 | **Property**       | **China**             | **USA**              |
 |--------------------|-----------------------|----------------------|
-| **Demand**         | 12,000 units          | 8,000 units          |
-| **Marketing Cost** | $100 per point        | $75 per point        |
-| **Product Cost**   | $8 per unit           | $15 per unit         |
-| **Sabotage Cost**  | $10,000 per attempt   | $15,000 per attempt  |
-| **Sabotage Rate**  | 50%                   | 75%                  |
-| **Starting Cash**  | $20,000               | $25,000              |
+| **Demand**         | 6,000 units           | 4,000 units          |
+| **Marketing Cost** | $80 per point         | $75 per point        |
+| **Product Cost**   | $10 per unit          | $13 per unit         |
+| **Sabotage Cost**  | $10,000 per attempt   | $13,000 per attempt  |
+| **Sabotage Rate**  | 50%                   | 60%                  |
+| **Starting Cash**  | $20,000               | $23,000              |
 
 ---
 
