@@ -55,7 +55,7 @@
 					<p class="text-xl">Time Remaining</p>
 					<p class="my-4 text-4xl font-bold">{remaining_time} seconds</p>
 				</div>
-				<div class="text-center font-light text-sm">
+				<div class="text-center text-sm font-light">
 					<p><span class="font-bold">{remaining_time % 10} seconds</span> till next round</p>
 				</div>
 			{:else}
@@ -69,13 +69,14 @@
 			<h2 class="my-4 text-center font-bold">Round {$admin?.current_round ?? 0} of 10</h2>
 
 			<div class="mx-auto flex w-1/3 flex-col gap-2">
-				{#if $admin}
+				{#if $admin?.player_data}
 					{#each [...$admin.player_data].sort((a, b) => b.score - a.score) as team, index}
 						<div class="flex">
 							<p class="w-1/2"><span class="font-bold">{index + 1}.</span>&emsp;{team.name}</p>
 							<p class="w-1/2 text-right">${team.score}</p>
 						</div>
-					{/each}				{:else}
+					{/each}
+				{:else}
 					<p class="text-center">Waiting for players to join...</p>
 				{/if}
 			</div>
