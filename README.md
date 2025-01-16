@@ -2,6 +2,14 @@
 
 Game to showcase economic competition for Ngee Ann's WISP module.
 
+---
+
+## Warnings
+
+1. Ngee Ann's Wi-Fi might block the websocket connections - Use mobile data
+
+---
+
 ## Overview
 
 Each player mans a company, and each company resides within one of 2 countries
