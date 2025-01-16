@@ -91,6 +91,7 @@ To install `bun`, follow [their documentation](https://bun.sh/docs/installation)
 
 ## Remaining Tasks
 
+- [ ] Tweak sabotaging
 - [ ] Add "user authentication" on the admin page
 - [ ] Add a leaderboard on the admin page
 - [ ] Fine-tune the values
