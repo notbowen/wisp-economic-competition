@@ -123,6 +123,7 @@
 				<p class="my-2 font-bold">Product Price (max: ${currentPlayer.country.max_price})</p>
 				<div class="align-center flex gap-2">
 					<Button
+						class="touch-manipulation"
 						on:click={() => {
 							if (currentPlayer.price <= 0) return;
 							currentPlayer.price -= 1;
@@ -133,6 +134,7 @@
 						${currentPlayer.price}
 					</p>
 					<Button
+						class="touch-manipulation"
 						on:click={() => {
 							if (currentPlayer.price >= currentPlayer.country.max_price) return;
 							currentPlayer.price += 1;
@@ -147,6 +149,7 @@
 				</p>
 				<div class="align-center flex gap-2">
 					<Button
+						class="touch-manipulation"
 						on:click={() => {
 							if (currentPlayer.marketing <= 0) return;
 							currentPlayer.marketing -= 1;
@@ -157,6 +160,7 @@
 						{currentPlayer.marketing} units / {currentPlayer.country.total_marketing} units
 					</p>
 					<Button
+						class="touch-manipulation"
 						on:click={() => {
 							currentPlayer.marketing += 1;
 							updatePlayerState();
@@ -183,7 +187,10 @@
 						{/if}
 					</Select.Content>
 				</Select.Root>
-				<Button disabled={!canSabotage} on:click={sabotagePlayer} class="my-2 w-64">Sabotage</Button
+				<Button
+					disabled={!canSabotage}
+					on:click={sabotagePlayer}
+					class="my-2 w-64 touch-manipulation">Sabotage</Button
 				>
 			</div>
 		</div>
@@ -194,7 +201,7 @@
 	{:else}
 		<div class="flex h-screen flex-col items-center justify-center text-center font-medium">
 			<p>Game ended!</p>
-			<br/>
+			<br />
 			<p class="text-xs">(Sorry for the bad UI, I was too lazy to design it 🗿)</p>
 		</div>
 	{/if}
