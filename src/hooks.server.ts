@@ -12,10 +12,13 @@ const join = (data: any, ws: WebSocket) => {
 
 	// Update country marketing
 	let country = data.country === 'China' ? china : usa;
+	let other_country = data.country === 'China' ? usa : china;
+
 	country.total_marketing += 20;
 
 	// Add user to country players
 	country.players.push(data.username);
+	other_country.players.push(data.username);
 
 	game_queue[data.username] = {
 		ws,
@@ -142,11 +145,18 @@ const remove_player = (ws: WebSocket) => {
 	// Remove player
 	for (var player in game_queue) {
 		if (game_queue[player].ws === ws) {
-			// Remove player from country
 			let player_data = game_queue[player].player_data;
+
+			// Remove player from country
 			player_data.country.players = player_data.country.players.filter(
-				(player) => player !== player
+				(p) => p !== player
 			);
+			let other_country = player_data.country.name === 'China' ? usa : china;
+			other_country.players = other_country.players.filter(
+				(p) => p !== player
+			);
+
+			// Update the country's total marketing
 			player_data.country.total_marketing -= player_data.marketing;
 
 			//  Remove player from game queue

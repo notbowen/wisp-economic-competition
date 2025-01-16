@@ -1,4 +1,5 @@
 export interface Country {
+	name: string;
 	demand: number;
 	marketing_cost: number;
 	production_cost: number;
@@ -11,6 +12,7 @@ export interface Country {
 }
 
 let china: Country = {
+	name: 'China',
 	demand: 12000,
 	marketing_cost: 100,
 	production_cost: 8,
@@ -23,6 +25,7 @@ let china: Country = {
 };
 
 let usa: Country = {
+	name: 'USA',
 	demand: 8000,
 	marketing_cost: 75,
 	production_cost: 15,
