@@ -1,3 +1,4 @@
+import type { Admin } from '$lib/admin';
 import { china, usa } from '$lib/country';
 import type { Player } from '$lib/player';
 import type { Handle } from '@sveltejs/kit';
@@ -6,8 +7,16 @@ import { WebSocket, WebSocketServer } from 'ws';
 let wss: WebSocketServer | null = null;
 let game_queue: Record<string, { player_data: Player; ws: WebSocket }> = {};
 let game_ongoing = false;
+let admin_ws: WebSocket | null = null;
+let current_round = 0;
 
 const join = (data: any, ws: WebSocket) => {
+	if (data.username === 'admin@wisp2024') {
+		admin_ws = ws;
+		send_admin_data(ws);
+		return;
+	}
+
 	if (game_queue[data.username]) {
 		ws.send(JSON.stringify({ event: 'loading', data: null }));
 		game_queue[data.username].ws = ws;
@@ -47,6 +56,9 @@ const join = (data: any, ws: WebSocket) => {
 			game_queue[player].player_data.demand = country.demand * (20 / country.total_marketing);
 		}
 	}
+
+	// Update admin
+	send_admin_data(admin_ws);
 };
 
 const gameloop = async () => {
@@ -66,6 +78,7 @@ const gameloop = async () => {
 
 	for (let i = 0; i < loops; i++) {
 		console.log(`Starting round ${i + 1} of ${loops}`);
+		current_round = i + 1;
 
 		// Wait for round to end
 		await new Promise((r) => setTimeout(r, ROUND_TIME * 1000));
@@ -81,6 +94,9 @@ const gameloop = async () => {
 				JSON.stringify({ event: 'update', data: game_queue[player].player_data })
 			);
 		}
+
+		// Update admin
+		send_admin_data(admin_ws);
 	}
 
 	// Send the end of the game
@@ -165,6 +181,22 @@ const handle_event = (event: string, data: any, ws: WebSocket) => {
 	else if (event === 'start' && !game_ongoing) gameloop();
 	else if (event === 'update') update_player(data.username, data);
 	else if (event === 'sabotage') sabotage_player(data.saboteur, data.target);
+};
+
+const send_admin_data = (ws: WebSocket | null) => {
+	if (!ws) return;
+	ws.send(
+		JSON.stringify({
+			event: 'admin',
+			data: {
+				current_round: current_round,
+				player_data: Object.entries(game_queue).map(([name, data]) => ({
+					name: name,
+					score: data.player_data.cash
+				}))
+			}
+		})
+	);
 };
 
 // const remove_player = (ws: WebSocket) => {
