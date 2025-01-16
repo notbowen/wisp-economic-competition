@@ -94,5 +94,5 @@ To install `bun`, follow [their documentation](https://bun.sh/docs/installation)
 - [x] Tweak sabotaging
 - [x] Add "user authentication" on the admin page
 - [x] Add a leaderboard on the admin page
-- [ ] Fine-tune the values
+- [x] Fine-tune the values
 - [ ] Playtest with the rest of the team
