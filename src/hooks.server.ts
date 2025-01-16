@@ -52,8 +52,8 @@ const join = (data: any, ws: WebSocket) => {
 const gameloop = async () => {
 	game_ongoing = true;
 
-	const TOTAL_TIME = 3 * 60;
-	const ROUND_TIME = 10;
+	const TOTAL_TIME = 60;  // 1 minute per game
+	const ROUND_TIME = 10;  // 10 seconds per round
 
 	const loops = TOTAL_TIME / ROUND_TIME;
 
@@ -88,6 +88,8 @@ const gameloop = async () => {
 		game_queue[player].ws.send(JSON.stringify({ event: 'end', data: null }));
 	}
 
+	// Reset game variables
+	game_queue = {};
 	game_ongoing = false;
 };
 
