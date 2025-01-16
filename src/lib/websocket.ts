@@ -3,7 +3,7 @@ import type { Player } from './player';
 import { toast } from 'svelte-sonner';
 import { WS_URL } from './config';
 
-const player = writable<Player | null | undefined>(null);
+const player = writable<Player | null | undefined | 'ongoing' | 'loading'>(null);
 const socket = new WebSocket(WS_URL);
 
 socket.addEventListener('open', (event) => {
@@ -22,6 +22,10 @@ socket.addEventListener('message', (event) => {
 		});
 	} else if (data.event === 'end') {
 		player.set(undefined);
+	} else if (data.event === 'ongoing') {
+		player.set('ongoing');
+	} else if (data.event === 'loading') {
+		player.set('loading')
 	}
 });
 

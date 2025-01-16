@@ -8,7 +8,16 @@ let game_queue: Record<string, { player_data: Player; ws: WebSocket }> = {};
 let game_ongoing = false;
 
 const join = (data: any, ws: WebSocket) => {
-	if (game_queue[data.username]) return;
+	if (game_queue[data.username]) {
+		ws.send(JSON.stringify({ event: 'loading', data: null }));
+		game_queue[data.username].ws = ws;
+		return;
+	};
+
+	if (game_ongoing) {
+		ws.send(JSON.stringify({ event: 'ongoing', data: null }));
+		return;
+	}
 
 	// Update country marketing
 	let country = data.country === 'China' ? china : usa;
@@ -156,41 +165,41 @@ const handle_event = (event: string, data: any, ws: WebSocket) => {
 	else if (event === 'sabotage') sabotage_player(data.saboteur, data.target);
 };
 
-const remove_player = (ws: WebSocket) => {
-	// Remove player
-	for (var player in game_queue) {
-		if (game_queue[player].ws === ws) {
-			let player_data = game_queue[player].player_data;
-
-			// Remove player from country
-			player_data.country.players = player_data.country.players.filter((p) => p !== player);
-			let other_country = player_data.country.name === 'China' ? usa : china;
-			other_country.players = other_country.players.filter((p) => p !== player);
-
-			// Update the country's total marketing
-			player_data.country.total_marketing -= player_data.marketing;
-
-			//  Remove player from game queue
-			delete game_queue[player];
-			break;
-		}
-	}
-
-	// Update the rest of the player's demand
-	for (var player in game_queue) {
-		let player_data = game_queue[player].player_data;
-		player_data.demand =
-			player_data.country.demand * (player_data.marketing / player_data.country.total_marketing);
-	}
-
-	// Push the update to the user
-	if (!game_ongoing) return;
-	for (var player in game_queue) {
-		game_queue[player].ws.send(
-			JSON.stringify({ event: 'update', data: game_queue[player].player_data })
-		);
-	}
-};
+// const remove_player = (ws: WebSocket) => {
+// 	// Remove player
+// 	for (var player in game_queue) {
+// 		if (game_queue[player].ws === ws) {
+// 			let player_data = game_queue[player].player_data;
+// 
+// 			// Remove player from country
+// 			player_data.country.players = player_data.country.players.filter((p) => p !== player);
+// 			let other_country = player_data.country.name === 'China' ? usa : china;
+// 			other_country.players = other_country.players.filter((p) => p !== player);
+// 
+// 			// Update the country's total marketing
+// 			player_data.country.total_marketing -= player_data.marketing;
+// 
+// 			//  Remove player from game queue
+// 			delete game_queue[player];
+// 			break;
+// 		}
+// 	}
+// 
+// 	// Update the rest of the player's demand
+// 	for (var player in game_queue) {
+// 		let player_data = game_queue[player].player_data;
+// 		player_data.demand =
+// 			player_data.country.demand * (player_data.marketing / player_data.country.total_marketing);
+// 	}
+// 
+// 	// Push the update to the user
+// 	if (!game_ongoing) return;
+// 	for (var player in game_queue) {
+// 		game_queue[player].ws.send(
+// 			JSON.stringify({ event: 'update', data: game_queue[player].player_data })
+// 		);
+// 	}
+// };
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// Lazy initialization of the WebSocket server (runs once)
@@ -207,7 +216,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			});
 
 			ws.on('close', () => {
-				remove_player(ws);
+				// remove_player(ws);
 				console.log('Client disconnected');
 			});
 		});

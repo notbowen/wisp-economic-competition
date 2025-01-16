@@ -98,7 +98,25 @@
 </script>
 
 <div class="mx-auto w-full max-w-sm px-4">
-	{#if currentPlayer}
+	{#if currentPlayer === null}
+		<p class="flex h-screen items-center justify-center text-center font-medium">
+			Waiting for game start... <i class="fas fa-spinner fa-spin"></i>
+		</p>
+	{:else if currentPlayer === undefined}
+		<div class="flex h-screen flex-col items-center justify-center text-center font-medium">
+			<p>Game ended!</p>
+			<br />
+			<p class="text-xs">(Sorry for the bad UI, I was too lazy to design it 🗿)</p>
+		</div>
+	{:else if currentPlayer === 'ongoing'}
+		<p class="flex h-screen items-center justify-center text-center font-medium">
+			Game is ongoing... <i class="fas fa-spinner fa-spin"></i>
+		</p>
+	{:else if currentPlayer === 'loading'}
+		<p class="flex h-screen items-center justify-center text-center font-medium">
+			Fetching your data from the server... <i class="fas fa-spinner fa-spin"></i>
+		</p>
+	{:else}
 		<div class="my-5">
 			<h1 class="text-center text-2xl font-bold">
 				{username} - {country}
@@ -152,7 +170,7 @@
 					<p>Marketing</p>
 					<p class="text-xs font-normal text-gray-500">
 						({currentPlayer.marketing} units = ${currentPlayer.marketing *
-						currentPlayer.country.marketing_cost} per round)
+							currentPlayer.country.marketing_cost} per round)
 					</p>
 				</div>
 				<div class="align-center flex gap-2">
@@ -205,16 +223,6 @@
 					class="my-2 w-64 touch-manipulation">Sabotage</Button
 				>
 			</div>
-		</div>
-	{:else if currentPlayer === null}
-		<p class="flex h-screen items-center justify-center text-center font-medium">
-			Waiting for game start... <i class="fas fa-spinner fa-spin"></i>
-		</p>
-	{:else}
-		<div class="flex h-screen flex-col items-center justify-center text-center font-medium">
-			<p>Game ended!</p>
-			<br />
-			<p class="text-xs">(Sorry for the bad UI, I was too lazy to design it 🗿)</p>
 		</div>
 	{/if}
 </div>
