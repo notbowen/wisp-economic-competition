@@ -106,6 +106,7 @@ const gameloop = async () => {
 
 	// Reset game variables
 	game_queue = {};
+	current_round = 0;
 	game_ongoing = false;
 };
 
