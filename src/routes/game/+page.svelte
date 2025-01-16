@@ -192,9 +192,10 @@
 			Waiting for game start... <i class="fas fa-spinner fa-spin"></i>
 		</p>
 	{:else}
-		<div class="text-center font-medium">
+		<div class="flex h-screen flex-col items-center justify-center text-center font-medium">
 			<p>Game ended!</p>
-			<p>Sorry for the bad UI; I was too lazy to design 🗿</p>
+			<br/>
+			<p class="text-xs">(Sorry for the bad UI, I was too lazy to design it 🗿)</p>
 		</div>
 	{/if}
 </div>
