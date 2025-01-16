@@ -101,7 +101,7 @@ const update_player = (player: string, new_data: any) => {
 			player_data.demand =
 				original_data.country.demand *
 				(player_data.marketing / original_data.country.total_marketing) *
-				(1 - (player_data.price / player_data.country.max_price));
+				(1 - player_data.price / player_data.country.max_price);
 		}
 	}
 
@@ -120,7 +120,7 @@ const sabotage_player = (saboteur: string, target: string) => {
 		victim = target;
 	} else {
 		victim = saboteur;
-	} 
+	}
 
 	// Update the player's data
 	game_queue[victim].player_data.cash -= game_queue[victim].player_data.country.sabotage_cost;
@@ -130,9 +130,24 @@ const sabotage_player = (saboteur: string, target: string) => {
 
 	// Alert the victim
 	game_queue[victim].ws.send(
-		JSON.stringify({ event: 'sabotage', data: success ? `You've been sabotaged by ${saboteur}!` : "Sabotage failed!" + ` You lost ${game_queue[victim].player_data.country.sabotage_cost}` })
+		JSON.stringify({
+			event: 'sabotage',
+			data:
+				(success ? `You've been sabotaged by ${saboteur}!` : 'Sabotage failed!') +
+				` You lost $${game_queue[victim].player_data.country.sabotage_cost}`
+		})
 	);
-}
+
+	// Alert the saboteur if they succeeded
+	if (success) {
+		game_queue[saboteur].ws.send(
+			JSON.stringify({
+				event: 'sabotage',
+				data: `You've sabotaged ${victim}! They lost $${game_queue[victim].player_data.country.sabotage_cost}!`
+			})
+		);
+	}
+};
 
 const handle_event = (event: string, data: any, ws: WebSocket) => {
 	if (event === 'join') join(data, ws);
@@ -148,13 +163,9 @@ const remove_player = (ws: WebSocket) => {
 			let player_data = game_queue[player].player_data;
 
 			// Remove player from country
-			player_data.country.players = player_data.country.players.filter(
-				(p) => p !== player
-			);
+			player_data.country.players = player_data.country.players.filter((p) => p !== player);
 			let other_country = player_data.country.name === 'China' ? usa : china;
-			other_country.players = other_country.players.filter(
-				(p) => p !== player
-			);
+			other_country.players = other_country.players.filter((p) => p !== player);
 
 			// Update the country's total marketing
 			player_data.country.total_marketing -= player_data.marketing;

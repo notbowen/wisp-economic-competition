@@ -120,7 +120,12 @@
 			<hr class="my-5" />
 
 			<div class="flex flex-col items-center justify-between">
-				<p class="my-2 font-bold">Product Price (max: ${currentPlayer.country.max_price})</p>
+				<div class="my-2 text-center font-bold">
+					<p>Product Price</p>
+					<p class="text-xs font-normal text-gray-500">
+						(max: ${currentPlayer.country.max_price})
+					</p>
+				</div>
 				<div class="align-center flex gap-2">
 					<Button
 						class="touch-manipulation"
@@ -143,10 +148,13 @@
 					>
 				</div>
 
-				<p class="my-2 font-bold">
-					Marketing ({currentPlayer.marketing} units = ${currentPlayer.marketing *
+				<div class="my-2 text-center font-bold">
+					<p>Marketing</p>
+					<p class="text-xs font-normal text-gray-500">
+						({currentPlayer.marketing} units = ${currentPlayer.marketing *
 						currentPlayer.country.marketing_cost} per round)
-				</p>
+					</p>
+				</div>
 				<div class="align-center flex gap-2">
 					<Button
 						class="touch-manipulation"
@@ -168,9 +176,13 @@
 					>
 				</div>
 
-				<p class="my-2 font-bold">
-					Sabotage (once per 10 secs, ±${currentPlayer.country.sabotage_cost})
-				</p>
+				<div class="my-2 text-center font-bold">
+					<p>Sabotage</p>
+					<p class="text-xs font-normal text-gray-500">
+						(once per 10 secs, {1 - currentPlayer.country.sabotage_chance} chance of losing ${currentPlayer
+							.country.sabotage_cost})
+					</p>
+				</div>
 				<Select.Root selected={targetPlayer} onSelectedChange={(value) => (targetPlayer = value)}>
 					<Select.Trigger class="w-64">
 						<Select.Value placeholder="Player to sabotage" />
