@@ -36,4 +36,5 @@ let usa: Country = {
 	max_price: 50,
 	players: []
 };
+
 export { china, usa };
