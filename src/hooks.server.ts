@@ -106,8 +106,13 @@ const gameloop = async () => {
 
 	// Reset game variables
 	game_queue = {};
+
 	usa.players = [];
 	china.players = [];
+
+	usa.total_marketing = 0;
+	china.total_marketing = 0;
+
 	current_round = 0;
 	game_ongoing = false;
 };
