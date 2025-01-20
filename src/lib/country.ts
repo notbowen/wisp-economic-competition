@@ -16,8 +16,8 @@ let china: Country = {
 	demand: 10000,
 	marketing_cost: 50,
 	production_cost: 8,
-	sabotage_cost: 10000,
-	sabotage_chance: 0.5,
+	sabotage_cost: 20000,
+	sabotage_chance: 0.7,
 	starting_cash: 30000,
 	total_marketing: 0,
 	max_price: 40,
@@ -29,12 +29,11 @@ let usa: Country = {
 	demand: 7000,
 	marketing_cost: 55,
 	production_cost: 10,
-	sabotage_cost: 13000,
-	sabotage_chance: 0.6,
+	sabotage_cost: 25000,
+	sabotage_chance: 0.8,
 	starting_cash: 35000,
 	total_marketing: 0,
 	max_price: 50,
 	players: []
 };
-
 export { china, usa };

@@ -69,8 +69,8 @@ Player Demand = Country Demand * (Player Marketing / Total Country Marketing) * 
 | **Demand**         | 10,000 units          | 7,000 units          |
 | **Marketing Cost** | $50 per point         | $55 per point        |
 | **Product Cost**   | $8 per unit           | $10 per unit         |
-| **Sabotage Cost**  | $10,000 per attempt   | $13,000 per attempt  |
-| **Sabotage Rate**  | 50%                   | 60%                  |
+| **Sabotage Cost**  | $20,000 per attempt   | $25,000 per attempt  |
+| **Sabotage Rate**  | 70%                   | 80%                  |
 | **Starting Cash**  | $30,000               | $35,000              |
 
 ---
