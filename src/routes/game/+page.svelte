@@ -198,7 +198,7 @@
 					<p>Sabotage</p>
 					<p class="text-xs font-normal text-gray-500">
 						(once per 10 secs, {1 - currentPlayer.country.sabotage_chance} chance of losing ${currentPlayer
-							.country.sabotage_cost})
+							.country.sabotage_cost.toFixed(1)})
 					</p>
 				</div>
 				<Select.Root selected={targetPlayer} onSelectedChange={(value) => (targetPlayer = value)}>
